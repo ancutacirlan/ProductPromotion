@@ -1,4 +1,4 @@
-package com.product.promotion.features.producers;
+package com.product.promotion.features.producer;
 
 
 import com.product.promotion.features.Audit;
@@ -21,11 +21,14 @@ public class Producer extends Audit implements Serializable {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "client_id")
+    @JoinColumn(name = "client_id", unique = true)
     private Client clientId;
 
     @Column(name = "document", nullable = false)
     private String document;
+
+    @Column(name = "description")
+    private String description;
 
     @Column(name = "active", nullable = false)
     private boolean active;

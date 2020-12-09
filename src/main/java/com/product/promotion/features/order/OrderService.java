@@ -26,6 +26,8 @@ public class OrderService implements OrderContract {
         this.modelMapper = modelMapper;
         this.clientContract = clientContract;
         this.locationContract = locationContract;
+        modelMapper.addMappings(Utils.orderFieldMapping);
+        modelMapper.addMappings(Utils.orderMapping);
     }
 
 

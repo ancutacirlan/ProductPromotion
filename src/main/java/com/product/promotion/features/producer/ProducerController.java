@@ -1,4 +1,4 @@
-package com.product.promotion.features.producers;
+package com.product.promotion.features.producer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

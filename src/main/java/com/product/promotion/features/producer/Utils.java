@@ -1,4 +1,4 @@
-package com.product.promotion.features.producers;
+package com.product.promotion.features.producer;
 
 import org.modelmapper.PropertyMap;
 

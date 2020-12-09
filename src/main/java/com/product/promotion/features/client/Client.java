@@ -41,5 +41,7 @@ public class Client extends Audit implements Serializable {
     @Column(name="valid_account", nullable = false)
     private Boolean valid_account;
 
+    @Column(name="is_admin")
+    private Boolean isAdmin;
 
 }

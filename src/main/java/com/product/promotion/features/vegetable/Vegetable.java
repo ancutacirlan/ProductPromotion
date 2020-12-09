@@ -20,4 +20,7 @@ public class Vegetable extends Audit implements Serializable {
     @Column(name = "name", unique = true, nullable = false)
     private String name;
 
+    @Column(name = "category", nullable = false)
+    private String category;
+
 }

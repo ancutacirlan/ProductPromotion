@@ -1,7 +1,7 @@
 package com.product.promotion.features.notice;
 
 import com.product.promotion.features.Audit;
-import com.product.promotion.features.producers.Producer;
+import com.product.promotion.features.producer.Producer;
 import com.product.promotion.features.vegetable.Vegetable;
 import lombok.Getter;
 import lombok.Setter;

@@ -44,5 +44,7 @@ public class ClientDto {
     private String no;
 
     private Boolean valid_account;
+    private Boolean isAdmin;
+
 
 }

@@ -1,4 +1,4 @@
-package com.product.promotion.features.producers;
+package com.product.promotion.features.producer;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -25,6 +25,7 @@ public class ProducerDto {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String email;
 
+    private String description;
     private String document;
     private boolean active;
 

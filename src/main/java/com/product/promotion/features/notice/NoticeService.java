@@ -1,7 +1,7 @@
 package com.product.promotion.features.notice;
 
 import com.product.promotion.features.notice.contract.NoticeContract;
-import com.product.promotion.features.producers.contract.ProducerContract;
+import com.product.promotion.features.producer.contract.ProducerContract;
 import com.product.promotion.features.vegetable.contract.VegetableContract;
 import com.sun.istack.NotNull;
 import org.modelmapper.ModelMapper;

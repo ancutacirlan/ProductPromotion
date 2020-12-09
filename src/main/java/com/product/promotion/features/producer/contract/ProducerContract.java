@@ -1,6 +1,6 @@
-package com.product.promotion.features.producers.contract;
+package com.product.promotion.features.producer.contract;
 
-import com.product.promotion.features.producers.Producer;
+import com.product.promotion.features.producer.Producer;
 
 public interface ProducerContract {
 

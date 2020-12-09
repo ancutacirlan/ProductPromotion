@@ -19,6 +19,7 @@ CREATE TABLE vegetables
 (
     id                  serial,
     name                varchar not null,
+    category            varchar not null,
     date_created        timestamp without time zone DEFAULT now(),
     date_updated        timestamp without time zone DEFAULT now(),
     is_deleted          boolean NOT NULL            DEFAULT FALSE,
@@ -36,6 +37,7 @@ CREATE TABLE clients
     email               varchar NOT NULL,
     password            varchar,
     location_id         int     NOT NULL,
+    is_admin            boolean                     DEFAULT false,
     valid_account       boolean NOT NULL            DEFAULT FALSE,
     date_created        timestamp without time zone DEFAULT now(),
     date_updated        timestamp without time zone DEFAULT now(),
@@ -51,11 +53,13 @@ CREATE TABLE producers
     id                  serial,
     client_id           int     NOT NULL,
     document            varchar NOT NULL,
+    description         varchar ,
     active              boolean NOT NULL            DEFAULT FALSE,
     date_created        timestamp without time zone DEFAULT now(),
     date_updated        timestamp without time zone DEFAULT now(),
     is_deleted          boolean NOT NULL            DEFAULT FALSE,
-    primary key (id)
+    primary key (id),
+    unique (client_id)
 );
 
 CREATE TABLE notices
@@ -97,9 +101,9 @@ CREATE TABLE orders
 (
     id                  serial,
     client_id           int NOT NULL,
-    data                DATE NOT NULL,
     confirmed           boolean NOT NULL           DEFAULT FALSE,
     notice_order        varchar,
+    date                timestamp without time zone DEFAULT now(),
     total_price         int  NOT NULL,
     location_id         int,
     date_created        timestamp without time zone DEFAULT now(),

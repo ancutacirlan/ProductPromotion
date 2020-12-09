@@ -1,7 +1,7 @@
-package com.product.promotion.features.producers;
+package com.product.promotion.features.producer;
 
 import com.product.promotion.features.client.contract.ClientContract;
-import com.product.promotion.features.producers.contract.ProducerContract;
+import com.product.promotion.features.producer.contract.ProducerContract;
 import com.sun.istack.NotNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
