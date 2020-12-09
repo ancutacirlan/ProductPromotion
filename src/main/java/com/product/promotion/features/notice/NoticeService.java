@@ -1,5 +1,7 @@
-package com.product.promotion.features.vegetable;
+package com.product.promotion.features.notice;
 
+import com.product.promotion.features.notice.contract.NoticeContract;
+import com.product.promotion.features.producers.contract.ProducerContract;
 import com.product.promotion.features.vegetable.contract.VegetableContract;
 import com.sun.istack.NotNull;
 import org.modelmapper.ModelMapper;
@@ -11,17 +13,23 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class VegetableService implements VegetableContract {
+public class NoticeService implements NoticeContract {
 
-    private VegetableRepository vegetableRepository;
+    private NoticeRepository noticeRepository;
     private ModelMapper modelMapper;
+    private ProducerContract producerContract;
+    private VegetableContract vegetableContract;
 
     @Autowired
-    public VegetableService(VegetableRepository vegetableRepository, ModelMapper modelMapper) {
-        this.vegetableRepository = vegetableRepository;
+    public NoticeService(NoticeRepository noticeRepository, ModelMapper modelMapper,
+                         ProducerContract producerContract, VegetableContract vegetableContract) {
+        this.noticeRepository = noticeRepository;
         this.modelMapper = modelMapper;
+        this.producerContract = producerContract;
+        this.vegetableContract = vegetableContract;
+        modelMapper.addMappings(Utils.noticeFieldMapping);
+        modelMapper.addMappings(Utils.noticeMapping);
     }
-
 
     /**
      * Creates a new entity in the database.
@@ -29,9 +37,10 @@ public class VegetableService implements VegetableContract {
      * @param dto The  DTO object will all information for creating the new object
      * @return A DTO object which contains information about the new object.
      */
-    VegetableDto create(@NotNull VegetableDto dto){
-        Vegetable vegetable = modelMapper.map(dto,Vegetable.class);
-        return modelMapper.map(vegetableRepository.save(vegetable),VegetableDto.class);
+    NoticeDto create(@NotNull NoticeDto dto) {
+        Notice notice = modelMapper.map(dto,Notice.class);
+        notice.setProducerId(producerContract.getProducerById(dto.getProducerId()));
+        return modelMapper.map(noticeRepository.save(notice), NoticeDto.class);
     }
 
     /**
@@ -40,11 +49,11 @@ public class VegetableService implements VegetableContract {
      * @return A list of DTO objects with details of the non soft-deleted entities stored in the database.
      */
 
-    List<VegetableDto> getAll() {
-        return vegetableRepository
+    List<NoticeDto> getAll() {
+        return noticeRepository
                 .findAllByIsDeletedFalse()
                 .stream()
-                .map(item -> modelMapper.map(item, VegetableDto.class))
+                .map(item -> modelMapper.map(item, NoticeDto.class))
                 .collect(Collectors.toList());
     }
 
@@ -54,23 +63,10 @@ public class VegetableService implements VegetableContract {
      * @param id The ID of the entity stored in the database.
      * @return A DTO object which contains information about the requested entity.
      */
-    VegetableDto getById(@NotNull Integer id) {
-        return vegetableRepository
+    NoticeDto getById(@NotNull Integer id) {
+        return noticeRepository
                 .findById(id)
-                .map(result -> modelMapper.map(result, VegetableDto.class))
-                .orElseThrow(EntityNotFoundException::new);
-    }
-
-    /**
-     * Gets an entity from the database based on its name.
-     *
-     * @param name The NAME of the entity stored in the database.
-     * @return A DTO object which contains information about the requested entity.
-     */
-    VegetableDto getByName(@NotNull String name) {
-        return vegetableRepository
-                .findByNameAndIsDeletedFalse(name)
-                .map(result -> modelMapper.map(result, VegetableDto.class))
+                .map(result -> modelMapper.map(result, NoticeDto.class))
                 .orElseThrow(EntityNotFoundException::new);
     }
 
@@ -80,11 +76,13 @@ public class VegetableService implements VegetableContract {
      * @param dto The DTO object which contains all the information for the entity.
      * @return A DTO object updated with the information which has stored in the database.
      */
-    VegetableDto update(@NotNull VegetableDto dto) {
-        return vegetableRepository
+    NoticeDto update(@NotNull NoticeDto dto) {
+        return noticeRepository
                 .findById(dto.getId())
-                .map(result -> modelMapper.map(dto, Vegetable.class))
-                .map(toBeUpdated -> modelMapper.map(vegetableRepository.save(toBeUpdated), VegetableDto.class))
+                .map(result -> {
+                    Notice toBeUpdated = modelMapper.map(dto, Notice.class);
+                    return modelMapper.map(noticeRepository.save(toBeUpdated), NoticeDto.class);
+                })
                 .orElseThrow(EntityNotFoundException::new);
     }
 
@@ -95,19 +93,26 @@ public class VegetableService implements VegetableContract {
      * @return TRUE if the entity was soft-deleted, FALSE otherwise.
      */
     Boolean delete(@NotNull Integer id) {
-        return vegetableRepository
+        return noticeRepository
                 .findById(id)
                 .map(result -> {
                     result.setIsDeleted(true);
-                    return vegetableRepository.save(result).getIsDeleted();
+                    return noticeRepository.save(result).getIsDeleted();
                 })
                 .orElseThrow(EntityNotFoundException::new);
     }
 
+    /**
+     * Gets an entity from the database based on its ID.
+     *
+     * @param id The ID of the entity stored in the database.
+     * @return A DTO object which contains information about the requested entity.
+     */
     @Override
-    public Vegetable getVegetableById(Integer id) {
-        return vegetableRepository
+    public Notice getNoticeById(Integer id) {
+        return noticeRepository
                 .findById(id)
                 .orElseThrow(EntityNotFoundException::new);
     }
+
 }

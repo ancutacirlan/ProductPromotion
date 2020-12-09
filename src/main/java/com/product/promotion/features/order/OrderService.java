@@ -1,6 +1,8 @@
-package com.product.promotion.features.vegetable;
+package com.product.promotion.features.order;
 
-import com.product.promotion.features.vegetable.contract.VegetableContract;
+import com.product.promotion.features.client.contract.ClientContract;
+import com.product.promotion.features.location.contract.LocationContract;
+import com.product.promotion.features.order.contract.OrderContract;
 import com.sun.istack.NotNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,15 +13,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class VegetableService implements VegetableContract {
+public class OrderService implements OrderContract {
 
-    private VegetableRepository vegetableRepository;
+    private OrderRepository orderRepository;
     private ModelMapper modelMapper;
+    private ClientContract clientContract;
+    private LocationContract locationContract;
 
     @Autowired
-    public VegetableService(VegetableRepository vegetableRepository, ModelMapper modelMapper) {
-        this.vegetableRepository = vegetableRepository;
+    public OrderService(OrderRepository orderRepository, ModelMapper modelMapper, ClientContract clientContract, LocationContract locationContract) {
+        this.orderRepository = orderRepository;
         this.modelMapper = modelMapper;
+        this.clientContract = clientContract;
+        this.locationContract = locationContract;
     }
 
 
@@ -29,9 +35,10 @@ public class VegetableService implements VegetableContract {
      * @param dto The  DTO object will all information for creating the new object
      * @return A DTO object which contains information about the new object.
      */
-    VegetableDto create(@NotNull VegetableDto dto){
-        Vegetable vegetable = modelMapper.map(dto,Vegetable.class);
-        return modelMapper.map(vegetableRepository.save(vegetable),VegetableDto.class);
+    OrderDto create(@NotNull OrderDto dto) {
+        Order order = modelMapper.map(dto, Order.class);
+        order.setClientId(clientContract.getClientById(dto.getClientId()));
+        return modelMapper.map(orderRepository.save(order), OrderDto.class);
     }
 
     /**
@@ -40,11 +47,11 @@ public class VegetableService implements VegetableContract {
      * @return A list of DTO objects with details of the non soft-deleted entities stored in the database.
      */
 
-    List<VegetableDto> getAll() {
-        return vegetableRepository
+    List<OrderDto> getAll() {
+        return orderRepository
                 .findAllByIsDeletedFalse()
                 .stream()
-                .map(item -> modelMapper.map(item, VegetableDto.class))
+                .map(item -> modelMapper.map(item, OrderDto.class))
                 .collect(Collectors.toList());
     }
 
@@ -54,23 +61,10 @@ public class VegetableService implements VegetableContract {
      * @param id The ID of the entity stored in the database.
      * @return A DTO object which contains information about the requested entity.
      */
-    VegetableDto getById(@NotNull Integer id) {
-        return vegetableRepository
+    OrderDto getById(@NotNull Integer id) {
+        return orderRepository
                 .findById(id)
-                .map(result -> modelMapper.map(result, VegetableDto.class))
-                .orElseThrow(EntityNotFoundException::new);
-    }
-
-    /**
-     * Gets an entity from the database based on its name.
-     *
-     * @param name The NAME of the entity stored in the database.
-     * @return A DTO object which contains information about the requested entity.
-     */
-    VegetableDto getByName(@NotNull String name) {
-        return vegetableRepository
-                .findByNameAndIsDeletedFalse(name)
-                .map(result -> modelMapper.map(result, VegetableDto.class))
+                .map(result -> modelMapper.map(result, OrderDto.class))
                 .orElseThrow(EntityNotFoundException::new);
     }
 
@@ -80,11 +74,13 @@ public class VegetableService implements VegetableContract {
      * @param dto The DTO object which contains all the information for the entity.
      * @return A DTO object updated with the information which has stored in the database.
      */
-    VegetableDto update(@NotNull VegetableDto dto) {
-        return vegetableRepository
+    OrderDto update(@NotNull OrderDto dto) {
+        return orderRepository
                 .findById(dto.getId())
-                .map(result -> modelMapper.map(dto, Vegetable.class))
-                .map(toBeUpdated -> modelMapper.map(vegetableRepository.save(toBeUpdated), VegetableDto.class))
+                .map(result -> {
+                    Order toBeUpdated = modelMapper.map(dto, Order.class);
+                    return modelMapper.map(orderRepository.save(toBeUpdated), OrderDto.class);
+                })
                 .orElseThrow(EntityNotFoundException::new);
     }
 
@@ -95,19 +91,26 @@ public class VegetableService implements VegetableContract {
      * @return TRUE if the entity was soft-deleted, FALSE otherwise.
      */
     Boolean delete(@NotNull Integer id) {
-        return vegetableRepository
+        return orderRepository
                 .findById(id)
                 .map(result -> {
                     result.setIsDeleted(true);
-                    return vegetableRepository.save(result).getIsDeleted();
+                    return orderRepository.save(result).getIsDeleted();
                 })
                 .orElseThrow(EntityNotFoundException::new);
     }
 
+    /**
+     * Gets an entity from the database based on its ID.
+     *
+     * @param id The ID of the entity stored in the database.
+     * @return A DTO object which contains information about the requested entity.
+     */
     @Override
-    public Vegetable getVegetableById(Integer id) {
-        return vegetableRepository
+    public Order getOrderById(Integer id) {
+        return orderRepository
                 .findById(id)
                 .orElseThrow(EntityNotFoundException::new);
     }
+
 }
