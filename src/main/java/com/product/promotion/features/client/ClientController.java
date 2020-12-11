@@ -18,11 +18,6 @@ public class ClientController {
         this.clientService = clientService;
     }
 
-    @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ClientDto> create(@RequestBody ClientDto dto) {
-        return ResponseEntity.ok(clientService.create(dto));
-    }
-
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ClientDto>> getAll() {
         return ResponseEntity.ok(clientService.getAll());

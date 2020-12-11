@@ -16,6 +16,7 @@ public class ProductDto {
     private String producerLastName;
     private String vegetableName;
     private Integer quantity;
+    private Integer pricePerUnit;
     private String deliveryMode;
     private Integer orderId;
 

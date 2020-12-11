@@ -3,12 +3,12 @@ package com.product.promotion.features.order;
 import com.product.promotion.features.client.contract.ClientContract;
 import com.product.promotion.features.location.contract.LocationContract;
 import com.product.promotion.features.order.contract.OrderContract;
-import com.sun.istack.NotNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -63,7 +63,8 @@ public class OrderService implements OrderContract {
      * @param id The ID of the entity stored in the database.
      * @return A DTO object which contains information about the requested entity.
      */
-    OrderDto getById(@NotNull Integer id) {
+    @Override
+    public OrderDto getById(@NotNull Integer id) {
         return orderRepository
                 .findById(id)
                 .map(result -> modelMapper.map(result, OrderDto.class))
@@ -76,7 +77,8 @@ public class OrderService implements OrderContract {
      * @param dto The DTO object which contains all the information for the entity.
      * @return A DTO object updated with the information which has stored in the database.
      */
-    OrderDto update(@NotNull OrderDto dto) {
+    @Override
+    public OrderDto update(@NotNull OrderDto dto) {
         return orderRepository
                 .findById(dto.getId())
                 .map(result -> {
@@ -92,7 +94,7 @@ public class OrderService implements OrderContract {
      * @param id The ID of the entity stored in the database.
      * @return TRUE if the entity was soft-deleted, FALSE otherwise.
      */
-    Boolean delete(@NotNull Integer id) {
+     Boolean delete(@NotNull Integer id) {
         return orderRepository
                 .findById(id)
                 .map(result -> {

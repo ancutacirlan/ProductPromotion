@@ -20,8 +20,8 @@ public class Utils {
         @Override
         protected void configure() {
             map().setProducerId(source.getProducerId().getId());
-            map().setProducerFirstName(source.getProducerId().getClientId().getFirst_name());
-            map().setProducerLastName(source.getProducerId().getClientId().getLast_name());
+            map().setProducerFirstName(source.getProducerId().getClientId().getFirstName());
+            map().setProducerLastName(source.getProducerId().getClientId().getLastName());
             map().setVegetableId(source.getVegetableId().getId());
             map().setVegetableName(source.getVegetableId().getName());
         }

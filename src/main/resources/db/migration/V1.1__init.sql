@@ -36,14 +36,15 @@ CREATE TABLE clients
     phone               varchar NOT NULL,
     email               varchar NOT NULL,
     password            varchar,
-    location_id         int     NOT NULL,
-    is_admin            boolean                     DEFAULT false,
+    location_id         int,
+    role                varchar default 'ROLE_USER',
     valid_account       boolean NOT NULL            DEFAULT FALSE,
     date_created        timestamp without time zone DEFAULT now(),
     date_updated        timestamp without time zone DEFAULT now(),
     is_deleted          boolean NOT NULL            DEFAULT FALSE,
     primary key (id),
     unique (email,phone),
+    check ( role = 'ROLE_USER' OR role = 'ROLE_ADMIN'),
     FOREIGN KEY (location_id) REFERENCES locations (id)
 
 );
@@ -51,7 +52,7 @@ CREATE TABLE clients
 CREATE TABLE producers
 (
     id                  serial,
-    client_id           int     NOT NULL,
+    client_id           int   ,
     document            varchar NOT NULL,
     description         varchar ,
     active              boolean NOT NULL            DEFAULT FALSE,

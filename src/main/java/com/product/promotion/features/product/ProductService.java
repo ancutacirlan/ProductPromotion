@@ -2,14 +2,16 @@ package com.product.promotion.features.product;
 
 
 import com.product.promotion.features.notice.contract.NoticeContract;
+import com.product.promotion.features.order.OrderDto;
+import com.product.promotion.features.order.OrderService;
 import com.product.promotion.features.order.contract.OrderContract;
 import com.product.promotion.features.producer.ProducerDto;
-import com.sun.istack.NotNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,14 +22,16 @@ public class ProductService {
     private ModelMapper modelMapper;
     private NoticeContract noticeContract;
     private OrderContract orderContract;
+    private OrderService orderService;
 
     @Autowired
     public ProductService(ProductRepository productRepository, ModelMapper modelMapper,
-                          NoticeContract noticeContract, OrderContract orderContract) {
+                          NoticeContract noticeContract, OrderContract orderContract, OrderService orderService) {
         this.productRepository = productRepository;
         this.modelMapper = modelMapper;
         this.noticeContract = noticeContract;
         this.orderContract = orderContract;
+        this.orderService = orderService;
         modelMapper.addMappings(Utils.productFieldMapping);
         modelMapper.addMappings(Utils.productMapping);
     }
@@ -42,6 +46,10 @@ public class ProductService {
         Product product = modelMapper.map(dto,Product.class);
         product.setOrderId(orderContract.getOrderById(dto.getOrderId()));
         product.setNoticeId(noticeContract.getNoticeById(dto.getNoticeId()));
+        OrderDto order = orderService.getById(product.getOrderId().getId());
+        order.setTotalPrice(order.getTotalPrice()+(product.getNoticeId().getPricePerUnit()*product.getQuantity()));
+        orderService.update(order);
+        System.out.println(order.getTotalPrice());
         return modelMapper.map(productRepository.save(product),ProductDto.class);
     }
 

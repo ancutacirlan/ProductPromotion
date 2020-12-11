@@ -20,7 +20,7 @@ public class ProducerController {
 
     @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ProducerDto> create(@RequestBody ProducerDto dto) {
-        return ResponseEntity.ok(producerService.create(dto));
+        return ResponseEntity.ok(producerService.register(dto));
     }
 
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -1,10 +1,7 @@
 package com.product.promotion.features.order;
 
-import org.hibernate.type.DateType;
 import org.modelmapper.PropertyMap;
 
-import javax.xml.crypto.Data;
-import java.time.LocalDateTime;
 
 public class Utils {
 
@@ -25,7 +22,6 @@ public class Utils {
         protected void configure() {
             map().setClientId(source.getClientId().getId());
             map().setLocationId(source.getLocationId().getId());
-
         }
     };
 

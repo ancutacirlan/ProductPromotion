@@ -1,13 +1,21 @@
 package com.product.promotion.features.producer;
 
+import com.product.promotion.features.authentification.LoginRequest;
+import com.product.promotion.features.client.Client;
+import com.product.promotion.features.client.ClientDto;
+import com.product.promotion.features.client.ClientRepository;
 import com.product.promotion.features.client.contract.ClientContract;
+import com.product.promotion.features.location.Location;
+import com.product.promotion.features.location.LocationDto;
+import com.product.promotion.features.location.LocationRepository;
 import com.product.promotion.features.producer.contract.ProducerContract;
-import com.sun.istack.NotNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,16 +25,25 @@ public class ProducerService implements ProducerContract {
     private ProducerRepository producerRepository;
     private ModelMapper modelMapper;
     private ClientContract clientContract;
+    private ClientRepository clientRepository;
+    private LocationRepository locationRepository;
+    private final PasswordEncoder encoder;
 
 
     @Autowired
-    public ProducerService(ProducerRepository producerRepository, ModelMapper modelMapper, ClientContract clientContract) {
+    public ProducerService(ProducerRepository producerRepository, ModelMapper modelMapper,
+                           ClientContract clientContract, ClientRepository clientRepository,
+                           LocationRepository locationRepository, PasswordEncoder encoder) {
         this.producerRepository = producerRepository;
         this.modelMapper = modelMapper;
         modelMapper.addMappings(Utils.producerFieldMapping);
         modelMapper.addMappings(Utils.producerMapping);
         this.clientContract = clientContract;
+        this.clientRepository = clientRepository;
+        this.locationRepository = locationRepository;
+        this.encoder = encoder;
     }
+
 
     /**
      * Creates a new entity in the database.
@@ -34,9 +51,16 @@ public class ProducerService implements ProducerContract {
      * @param dto The  DTO object will all information for creating the new object
      * @return A DTO object which contains information about the new object.
      */
-    ProducerDto create(@NotNull ProducerDto dto){
+    @Override
+    public ProducerDto register(@NotNull ProducerDto dto){
+        Location location = modelMapper.map(dto, Location.class);
+        modelMapper.map(locationRepository.save(location), LocationDto.class);
+        Client client = modelMapper.map(dto,Client.class);
+        client.setLocationId(location);
+        client.setPassword(encoder.encode(dto.getPassword()));
+        modelMapper.map(clientRepository.save(client), ClientDto.class);
         Producer producer = modelMapper.map(dto,Producer.class);
-        producer.setClientId(clientContract.getClientById(dto.getClientId()));
+        producer.setClientId(client);
         return modelMapper.map(producerRepository.save(producer),ProducerDto.class);
     }
 
@@ -125,4 +149,5 @@ public class ProducerService implements ProducerContract {
                 .findById(id)
                 .orElseThrow(EntityNotFoundException::new);
     }
+
 }

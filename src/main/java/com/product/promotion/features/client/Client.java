@@ -20,10 +20,10 @@ public class Client extends Audit implements Serializable {
     private Integer id;
 
     @Column(name="first_name", nullable = false)
-    private String first_name;
+    private String firstName;
 
     @Column(name="last_name", nullable = false)
-    private String last_name;
+    private String lastName;
 
     @Column(name="phone", nullable = false, unique = true)
     private String phone;
@@ -36,12 +36,14 @@ public class Client extends Audit implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "location_id")
-    private Location location_id;
+    private Location locationId;
 
     @Column(name="valid_account", nullable = false)
-    private Boolean valid_account;
+    private Boolean validAccount;
 
-    @Column(name="is_admin")
-    private Boolean isAdmin;
+    @Column(name="role")
+    private String role;
+
+
 
 }

@@ -12,21 +12,27 @@ public class ProducerDto {
 
     private Integer id;
     private Integer clientId;
-
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String firstName;
-
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String lastName;
-
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String phone;
-
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String email;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private String password;
+    private Integer locationId;
+    private String city;
+    private String district;
+    private String country;
+    private String village;
+    private String street;
+    private String bloc;
+    private String stair;
+    private String no;
+    private Boolean validAccount;
+    private String role;
     private String description;
     private String document;
     private boolean active;
+
 
 }

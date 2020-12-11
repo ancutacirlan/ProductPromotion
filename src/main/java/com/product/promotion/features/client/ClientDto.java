@@ -12,39 +12,24 @@ import lombok.NoArgsConstructor;
 public class ClientDto {
 
     private Integer id;
-    private String first_name;
-    private String last_name;
+    private String firstName;
+    private String lastName;
     private String phone;
     private String email;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
-    private Integer location_id;
-
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Integer locationId;
     private String city;
-
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String district;
-
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String country;
-
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String village;
-
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String street;
-
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String bloc;
-
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String stair;
-
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String no;
-
-    private Boolean valid_account;
-    private Boolean isAdmin;
+    private Boolean validAccount;
+    private String role;
 
 
 }

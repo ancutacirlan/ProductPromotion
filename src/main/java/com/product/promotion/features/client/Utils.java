@@ -10,22 +10,22 @@ public class Utils {
     public static PropertyMap<ClientDto, Client> clientMapping = new PropertyMap<>() {
         @Override
         protected void configure() {
-            map().getLocation_id().setId(source.getLocation_id());
+            map().getLocationId().setId(source.getLocationId());
         }
     };
 
     public static PropertyMap<Client, ClientDto> clientFieldMapping = new PropertyMap<>() {
         @Override
         protected void configure() {
-            map().setLocation_id(source.getLocation_id().getId());
-            map().setCity(source.getLocation_id().getCity());
-            map().setDistrict(source.getLocation_id().getDistrict());
-            map().setCountry(source.getLocation_id().getCountry());
-            map().setNo(source.getLocation_id().getNo());
-            map().setStreet(source.getLocation_id().getStreet());
-            map().setVillage(source.getLocation_id().getVillage());
-            map().setBloc(source.getLocation_id().getBloc());
-            map().setStair(source.getLocation_id().getStair());
+            map().setLocationId(source.getLocationId().getId());
+            map().setCity(source.getLocationId().getCity());
+            map().setDistrict(source.getLocationId().getDistrict());
+            map().setCountry(source.getLocationId().getCountry());
+            map().setNo(source.getLocationId().getNo());
+            map().setStreet(source.getLocationId().getStreet());
+            map().setVillage(source.getLocationId().getVillage());
+            map().setBloc(source.getLocationId().getBloc());
+            map().setStair(source.getLocationId().getStair());
         }
     };
 

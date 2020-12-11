@@ -3,6 +3,8 @@ package com.product.promotion.features.order;
 import com.product.promotion.features.Audit;
 import com.product.promotion.features.client.Client;
 import com.product.promotion.features.location.Location;
+import com.product.promotion.features.product.Product;
+import com.product.promotion.features.product.ProductDto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,6 +12,8 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
