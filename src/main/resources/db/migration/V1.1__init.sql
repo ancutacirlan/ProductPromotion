@@ -37,14 +37,14 @@ CREATE TABLE clients
     email               varchar NOT NULL,
     password            varchar,
     location_id         int,
-    role                varchar default 'ROLE_USER',
+    role                varchar,
     valid_account       boolean NOT NULL            DEFAULT FALSE,
     date_created        timestamp without time zone DEFAULT now(),
     date_updated        timestamp without time zone DEFAULT now(),
     is_deleted          boolean NOT NULL            DEFAULT FALSE,
     primary key (id),
     unique (email,phone),
-    check ( role = 'ROLE_USER' OR role = 'ROLE_ADMIN'),
+    check ( role = 'ROLE_CUMPARATOR' OR role = 'ROLE_PRODUCATOR' OR role = 'ROLE_ADMIN'),
     FOREIGN KEY (location_id) REFERENCES locations (id)
 
 );

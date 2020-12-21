@@ -18,8 +18,9 @@ public class ProductController {
     }
 
     @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ProductDto> create(@RequestBody ProductDto dto) {
-        return ResponseEntity.ok(productService.create(dto));
+    public ResponseEntity<?> create(@RequestBody ProductDto dto) {
+        var response = productService.create(dto);
+        return response;
     }
 
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)

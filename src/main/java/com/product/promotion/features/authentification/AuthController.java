@@ -27,7 +27,10 @@ public class AuthController {
     @PostMapping("/signin")
     public ResponseEntity<JwtResponse> authenticateUser(@RequestBody LoginRequest loginRequest) {
         String jwt = clientService.authenticate(loginRequest);
-        return ResponseEntity.ok(new JwtResponse(jwt));
+        String role = clientService.getClientByEmail(loginRequest.getEmail()).getRole();
+        String email = clientService.getClientByEmail(loginRequest.getEmail()).getEmail();
+        Integer id = clientService.getClientByEmail(loginRequest.getEmail()).getId();
+        return ResponseEntity.ok(new JwtResponse(jwt,id,email,role));
     }
 
     @PostMapping(path = "/signup/client", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

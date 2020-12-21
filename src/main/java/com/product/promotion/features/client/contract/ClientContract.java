@@ -10,4 +10,5 @@ public interface ClientContract {
 
     Client getClientById(Integer id);
     ClientDto register(ClientDto clientDto);
+    Client getClientByEmail(String email);
 }

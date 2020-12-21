@@ -66,7 +66,6 @@ public class ClientService implements ClientContract {
     public String authenticate(LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
-
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
         return jwt;
@@ -155,6 +154,13 @@ public class ClientService implements ClientContract {
     public Client getClientById(Integer id) {
         return clientRepository
                 .findById(id)
+                .orElseThrow(EntityNotFoundException::new);
+    }
+
+    @Override
+    public Client getClientByEmail(String email) {
+        return clientRepository
+                .findByEmailAndIsDeletedFalse(email)
                 .orElseThrow(EntityNotFoundException::new);
     }
 

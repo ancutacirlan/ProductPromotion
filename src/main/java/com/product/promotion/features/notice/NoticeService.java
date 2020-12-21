@@ -40,6 +40,7 @@ public class NoticeService implements NoticeContract {
     NoticeDto create(@NotNull NoticeDto dto) {
         Notice notice = modelMapper.map(dto,Notice.class);
         notice.setProducerId(producerContract.getProducerById(dto.getProducerId()));
+        notice.setVegetableId(vegetableContract.getVegetableById(dto.getVegetableId()));
         return modelMapper.map(noticeRepository.save(notice), NoticeDto.class);
     }
 
@@ -63,7 +64,7 @@ public class NoticeService implements NoticeContract {
      * @param id The ID of the entity stored in the database.
      * @return A DTO object which contains information about the requested entity.
      */
-    NoticeDto getById(@NotNull Integer id) {
+    public NoticeDto getById(@NotNull Integer id) {
         return noticeRepository
                 .findById(id)
                 .map(result -> modelMapper.map(result, NoticeDto.class))
@@ -76,7 +77,7 @@ public class NoticeService implements NoticeContract {
      * @param dto The DTO object which contains all the information for the entity.
      * @return A DTO object updated with the information which has stored in the database.
      */
-    NoticeDto update(@NotNull NoticeDto dto) {
+    public NoticeDto update(@NotNull NoticeDto dto) {
         return noticeRepository
                 .findById(dto.getId())
                 .map(result -> {

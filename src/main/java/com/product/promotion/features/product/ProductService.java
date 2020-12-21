@@ -1,6 +1,8 @@
 package com.product.promotion.features.product;
 
 
+import com.product.promotion.features.notice.NoticeDto;
+import com.product.promotion.features.notice.NoticeService;
 import com.product.promotion.features.notice.contract.NoticeContract;
 import com.product.promotion.features.order.OrderDto;
 import com.product.promotion.features.order.OrderService;
@@ -8,6 +10,7 @@ import com.product.promotion.features.order.contract.OrderContract;
 import com.product.promotion.features.producer.ProducerDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -23,15 +26,17 @@ public class ProductService {
     private NoticeContract noticeContract;
     private OrderContract orderContract;
     private OrderService orderService;
+    private NoticeService noticeService;
 
     @Autowired
     public ProductService(ProductRepository productRepository, ModelMapper modelMapper,
-                          NoticeContract noticeContract, OrderContract orderContract, OrderService orderService) {
+                          NoticeContract noticeContract, OrderContract orderContract, OrderService orderService, NoticeService noticeService) {
         this.productRepository = productRepository;
         this.modelMapper = modelMapper;
         this.noticeContract = noticeContract;
         this.orderContract = orderContract;
         this.orderService = orderService;
+        this.noticeService = noticeService;
         modelMapper.addMappings(Utils.productFieldMapping);
         modelMapper.addMappings(Utils.productMapping);
     }
@@ -42,15 +47,22 @@ public class ProductService {
      * @param dto The  DTO object will all information for creating the new object
      * @return A DTO object which contains information about the new object.
      */
-    ProductDto create(@NotNull ProductDto dto){
+    ResponseEntity<?> create(@NotNull ProductDto dto){
         Product product = modelMapper.map(dto,Product.class);
         product.setOrderId(orderContract.getOrderById(dto.getOrderId()));
         product.setNoticeId(noticeContract.getNoticeById(dto.getNoticeId()));
-        OrderDto order = orderService.getById(product.getOrderId().getId());
-        order.setTotalPrice(order.getTotalPrice()+(product.getNoticeId().getPricePerUnit()*product.getQuantity()));
-        orderService.update(order);
-        System.out.println(order.getTotalPrice());
-        return modelMapper.map(productRepository.save(product),ProductDto.class);
+        NoticeDto notice = noticeService.getById(product.getNoticeId().getId());
+        if(notice.getAvaibleQuantity().compareTo(product.getQuantity())>0){
+            notice.setAvaibleQuantity(notice.getAvaibleQuantity()- product.getQuantity());
+            noticeService.update(notice);
+            OrderDto order = orderService.getById(product.getOrderId().getId());
+            order.setTotalPrice(order.getTotalPrice()+(product.getNoticeId().getPricePerUnit()*product.getQuantity()));
+            orderService.update(order);
+           return ResponseEntity.ok(modelMapper.map(productRepository.save(product),ProductDto.class));
+        }
+        else
+            return ResponseEntity.badRequest().body("Quantity not avaible");
+
     }
 
     /**
