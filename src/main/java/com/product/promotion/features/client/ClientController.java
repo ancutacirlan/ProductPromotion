@@ -23,6 +23,11 @@ public class ClientController {
         return ResponseEntity.ok(clientService.getAll());
     }
 
+    @GetMapping(path = "/role", produces = MediaType.APPLICATION_JSON_VALUE, params = {"role"})
+    public ResponseEntity<List<ClientDto>> getByRole(@RequestParam(value = "role") String role) {
+        return ResponseEntity.ok(clientService.getAllByRole(role));
+    }
+
     @GetMapping(path = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ClientDto> getById(@PathVariable("id") Integer id) {
         return ResponseEntity.ok(clientService.getById(id));

@@ -85,6 +85,13 @@ public class ClientService implements ClientContract {
                 .collect(Collectors.toList());
     }
 
+    List<ClientDto> getAllByRole(@NotNull String role) {
+        return clientRepository
+                .findAllByRoleAndIsDeletedFalse(role)
+                .stream()
+                .map(item -> modelMapper.map(item, ClientDto.class))
+                .collect(Collectors.toList());
+    }
     /**
      * Gets an entity from the database based on its ID.
      *
