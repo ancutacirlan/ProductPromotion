@@ -5,6 +5,7 @@ import com.product.promotion.features.producer.contract.ProducerContract;
 import com.product.promotion.features.vegetable.contract.VegetableContract;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -22,7 +23,7 @@ public class NoticeService implements NoticeContract {
 
     @Autowired
     public NoticeService(NoticeRepository noticeRepository, ModelMapper modelMapper,
-                         ProducerContract producerContract, VegetableContract vegetableContract) {
+                         @Lazy ProducerContract producerContract, VegetableContract vegetableContract) {
         this.noticeRepository = noticeRepository;
         this.modelMapper = modelMapper;
         this.producerContract = producerContract;
@@ -57,6 +58,18 @@ public class NoticeService implements NoticeContract {
                 .map(item -> modelMapper.map(item, NoticeDto.class))
                 .collect(Collectors.toList());
     }
+
+
+
+   public List<NoticeDto> getAllByProducer(@NotNull Integer producerId) {
+        return noticeRepository
+                .findAllByProducerIdAndIsDeletedFalse(producerContract.getProducerById(producerId))
+                .stream()
+                .map(item -> modelMapper.map(item, NoticeDto.class))
+                .collect(Collectors.toList());
+    }
+
+
 
     /**
      * Gets an entity from the database based on its ID.

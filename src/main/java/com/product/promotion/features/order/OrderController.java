@@ -18,9 +18,15 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<OrderDto> create(@RequestBody OrderDto dto) {
-        return ResponseEntity.ok(orderService.create(dto));
+    @PostMapping(path = "/initiate", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<OrderDto> initiate(@RequestBody OrderDto dto) {
+        return ResponseEntity.ok(orderService.initiate(dto));
+    }
+
+    @GetMapping(path = "/sent/orderId/{orderId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> create(@PathVariable("orderId") Integer orderId){
+        var response = orderService.placeOrderAndSentEmail(orderId);
+        return response;
     }
 
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)

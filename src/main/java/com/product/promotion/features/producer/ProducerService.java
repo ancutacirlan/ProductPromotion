@@ -1,6 +1,5 @@
 package com.product.promotion.features.producer;
 
-import com.product.promotion.features.authentification.LoginRequest;
 import com.product.promotion.features.client.Client;
 import com.product.promotion.features.client.ClientDto;
 import com.product.promotion.features.client.ClientRepository;
@@ -8,6 +7,7 @@ import com.product.promotion.features.client.contract.ClientContract;
 import com.product.promotion.features.location.Location;
 import com.product.promotion.features.location.LocationDto;
 import com.product.promotion.features.location.LocationRepository;
+import com.product.promotion.features.notice.contract.NoticeContract;
 import com.product.promotion.features.producer.contract.ProducerContract;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,14 +29,16 @@ public class ProducerService implements ProducerContract {
     private ClientRepository clientRepository;
     private LocationRepository locationRepository;
     private final PasswordEncoder encoder;
+    private NoticeContract noticeContract;
 
 
     @Autowired
     public ProducerService(ProducerRepository producerRepository, ModelMapper modelMapper,
                            ClientContract clientContract, ClientRepository clientRepository,
-                           LocationRepository locationRepository, PasswordEncoder encoder) {
+                           LocationRepository locationRepository, PasswordEncoder encoder, NoticeContract noticeContract) {
         this.producerRepository = producerRepository;
         this.modelMapper = modelMapper;
+        this.noticeContract = noticeContract;
         modelMapper.addMappings(Utils.producerFieldMapping);
         modelMapper.addMappings(Utils.producerMapping);
         this.clientContract = clientContract;

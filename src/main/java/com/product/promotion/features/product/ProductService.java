@@ -4,12 +4,15 @@ package com.product.promotion.features.product;
 import com.product.promotion.features.notice.NoticeDto;
 import com.product.promotion.features.notice.NoticeService;
 import com.product.promotion.features.notice.contract.NoticeContract;
+import com.product.promotion.features.order.Order;
 import com.product.promotion.features.order.OrderDto;
 import com.product.promotion.features.order.OrderService;
 import com.product.promotion.features.order.contract.OrderContract;
 import com.product.promotion.features.producer.ProducerDto;
+import com.product.promotion.features.product.contract.ProductsContract;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class ProductService {
+public class ProductService implements ProductsContract {
 
     private ProductRepository productRepository;
     private ModelMapper modelMapper;
@@ -30,7 +33,7 @@ public class ProductService {
 
     @Autowired
     public ProductService(ProductRepository productRepository, ModelMapper modelMapper,
-                          NoticeContract noticeContract, OrderContract orderContract, OrderService orderService, NoticeService noticeService) {
+                          NoticeContract noticeContract, @Lazy OrderContract orderContract, @Lazy OrderService orderService, NoticeService noticeService) {
         this.productRepository = productRepository;
         this.modelMapper = modelMapper;
         this.noticeContract = noticeContract;
@@ -98,9 +101,11 @@ public class ProductService {
      * @param orderId The order ID of the entity stored in the database.
      * @return A list of  DTO object which contains information about the requested entity.
      */
-    List<ProductDto> getAllByOrder(@NotNull Integer orderId) {
+    @Override
+    public List<ProductDto> getAllByOrder(@NotNull Integer orderId) {
+        Order order = orderContract.getOrderById(orderId);
         return productRepository
-                .getAllByOrderIdAndIsDeletedFalse(orderId)
+                .findAllByOrderIdAndIsDeletedFalse(order)
                 .stream()
                 .map(item -> modelMapper.map(item, ProductDto.class))
                 .collect(Collectors.toList());

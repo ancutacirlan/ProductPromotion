@@ -1,10 +1,14 @@
 package com.product.promotion.features.producer;
 
+
+import com.product.promotion.features.notice.contract.NoticeContract;
 import org.modelmapper.PropertyMap;
+
+
 
 public class Utils {
 
-    private Utils() {
+    public Utils() {
     }
 
     public static PropertyMap<ProducerDto, Producer> producerMapping = new PropertyMap<>() {
@@ -15,9 +19,10 @@ public class Utils {
     };
 
     public static PropertyMap<Producer, ProducerDto> producerFieldMapping = new PropertyMap<>() {
+
         @Override
         protected void configure() {
-            map().setClientId(source.getClientId().getId());
+            map().setClientId(source.getId());
             map().setFirstName(source.getClientId().getFirstName());
             map().setLastName(source.getClientId().getLastName());
             map().setEmail(source.getClientId().getEmail());

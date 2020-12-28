@@ -28,4 +28,9 @@ public class ProductController {
         return ResponseEntity.ok(productService.getAll());
     }
 
+    @GetMapping(path = "orderId/{orderId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<ProductDto>> getByOrder(@PathVariable Integer orderId) {
+        return ResponseEntity.ok(productService.getAllByOrder(orderId));
+    }
+
 }

@@ -3,13 +3,19 @@ package com.product.promotion.features.order;
 import com.product.promotion.features.client.contract.ClientContract;
 import com.product.promotion.features.location.contract.LocationContract;
 import com.product.promotion.features.order.contract.OrderContract;
+import com.product.promotion.features.product.ProductDto;
+import com.product.promotion.features.product.contract.ProductsContract;
+import com.product.promotion.utils.SendEmail;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,16 +25,22 @@ public class OrderService implements OrderContract {
     private ModelMapper modelMapper;
     private ClientContract clientContract;
     private LocationContract locationContract;
+    private SendEmail sendEmail;
+    private ProductsContract productsContract;
 
     @Autowired
-    public OrderService(OrderRepository orderRepository, ModelMapper modelMapper, ClientContract clientContract, LocationContract locationContract) {
+    public OrderService(OrderRepository orderRepository, ModelMapper modelMapper, ClientContract clientContract,
+                        LocationContract locationContract, SendEmail sendEmail, ProductsContract productsContract) {
         this.orderRepository = orderRepository;
         this.modelMapper = modelMapper;
         this.clientContract = clientContract;
         this.locationContract = locationContract;
+        this.sendEmail = sendEmail;
+        this.productsContract = productsContract;
         modelMapper.addMappings(Utils.orderFieldMapping);
         modelMapper.addMappings(Utils.orderMapping);
     }
+
 
 
     /**
@@ -37,10 +49,38 @@ public class OrderService implements OrderContract {
      * @param dto The  DTO object will all information for creating the new object
      * @return A DTO object which contains information about the new object.
      */
-    OrderDto create(@NotNull OrderDto dto) {
+    OrderDto initiate (@NotNull OrderDto dto) {
         Order order = modelMapper.map(dto, Order.class);
         order.setClientId(clientContract.getClientById(dto.getClientId()));
         return modelMapper.map(orderRepository.save(order), OrderDto.class);
+    }
+
+
+
+    ResponseEntity<String> placeOrderAndSentEmail (@NotNull Integer orderId) {
+
+        StringBuilder mail = new StringBuilder(String.format("%32s%32s%32s%32s", "Produs", "Cantitate", "Pret", "Producator"));
+        mail.append("\n");
+        Optional<Order> order = orderRepository
+                .findById(orderId);
+        List<ProductDto> productDto = productsContract.getAllByOrder(orderId);
+        if(productDto.isEmpty())
+            return ResponseEntity.badRequest().body("Adaugati cel putin un produs!");
+        else
+        {
+            for (ProductDto product: productDto) {
+                mail.append(String.format("%32s%32s%32s%32s", product.getVegetableName(), product.getQuantity(),
+                        product.getPricePerUnit() * product.getQuantity(), product.getProducerFirstName() + " " + product.getProducerLastName() + "\n"));
+            }
+            mail.append("\n");
+            mail.append("\n");
+            mail.append("Pret total: ").append(order.get().getTotalPrice()).append("\n");
+            mail.append("Detalii: ").append(order.get().getDetails()).append("\n");
+            sendEmail.sendMail(order.get().getClientId().getEmail(), "Comanda dumneavoastra: "
+                    , mail.toString());
+            return ResponseEntity.ok("Comanda plasata cu succes!");
+        }
+
     }
 
     /**
@@ -48,7 +88,6 @@ public class OrderService implements OrderContract {
      *
      * @return A list of DTO objects with details of the non soft-deleted entities stored in the database.
      */
-
     List<OrderDto> getAll() {
         return orderRepository
                 .findAllByIsDeletedFalse()

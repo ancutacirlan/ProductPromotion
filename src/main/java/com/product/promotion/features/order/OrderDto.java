@@ -1,8 +1,6 @@
 package com.product.promotion.features.order;
 
 
-import com.product.promotion.features.product.Product;
-import com.product.promotion.features.product.ProductDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

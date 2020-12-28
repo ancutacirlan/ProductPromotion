@@ -34,6 +34,11 @@ public class NoticeController {
         return ResponseEntity.ok(noticeService.getById(id));
     }
 
+    @GetMapping(path = "/producerId/{producerId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<NoticeDto>> getAllNoticeByProducerId(@PathVariable("producerId") Integer producerId) {
+        return ResponseEntity.ok(noticeService.getAllByProducer(producerId));
+    }
+
     @PutMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<NoticeDto> update(@RequestBody NoticeDto dto) {
         return ResponseEntity.ok(noticeService.update(dto));
