@@ -7,6 +7,8 @@ import com.product.promotion.features.location.Location;
 import com.product.promotion.features.location.LocationDto;
 import com.product.promotion.features.location.LocationRepository;
 import com.product.promotion.features.location.contract.LocationContract;
+import com.product.promotion.utils.GeneratePassword;
+import com.product.promotion.utils.SendEmail;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,10 +33,14 @@ public class ClientService implements ClientContract {
     private ModelMapper modelMapper;
     private LocationContract locationContract;
     private final PasswordEncoder encoder;
+    private final GeneratePassword generatePassword;
+    private final SendEmail sendEmail;
+
+
 
     @Autowired
     public ClientService(AuthenticationManager authenticationManager, JwtUtils jwtUtils, LocationRepository locationRepository,
-                         ClientRepository clientRepository, ModelMapper modelMapper, LocationContract locationContract, PasswordEncoder encoder) {
+                         ClientRepository clientRepository, ModelMapper modelMapper, LocationContract locationContract, PasswordEncoder encoder, GeneratePassword generatePassword, SendEmail sendEmail) {
         this.authenticationManager = authenticationManager;
         this.locationRepository = locationRepository;
         this.jwtUtils = jwtUtils;
@@ -42,6 +48,8 @@ public class ClientService implements ClientContract {
         this.modelMapper = modelMapper;
         this.locationContract = locationContract;
         this.encoder = encoder;
+        this.generatePassword = generatePassword;
+        this.sendEmail = sendEmail;
         modelMapper.addMappings(Utils.clientFieldMapping);
         modelMapper.addMappings(Utils.clientMapping);
     }
@@ -71,6 +79,12 @@ public class ClientService implements ClientContract {
         return jwt;
     }
 
+    public void resetPassword(Client client) {
+        String password = generatePassword.generateRandomPassword();
+        client.setPassword(encoder.encode(password));
+        clientRepository.save(client);
+        sendEmail.sendMail(client.getEmail(), "New password: ", password);
+    }
     /**
      * Returns a list of all non soft-deleted entities from the database.
      *
@@ -150,6 +164,8 @@ public class ClientService implements ClientContract {
                 })
                 .orElseThrow(EntityNotFoundException::new);
     }
+
+
 
     /**
      * Gets an entity from the database based on its ID.

@@ -1,13 +1,17 @@
 package com.product.promotion.features.authentification;
 
+import com.product.promotion.features.client.Client;
 import com.product.promotion.features.client.ClientDto;
 import com.product.promotion.features.client.ClientService;
 import com.product.promotion.features.producer.ProducerDto;
 import com.product.promotion.features.producer.ProducerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -40,6 +44,17 @@ public class AuthController {
     @PostMapping(path = "/signup/producer", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ProducerDto> registerProducer(@RequestBody ProducerDto dto) {
         return ResponseEntity.ok(producerService.register(dto));
+    }
+
+    @PostMapping("/reset-password")
+    public void resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
+        Optional<Client> val = Optional.ofNullable(clientService.getClientByEmail(resetPasswordRequest.getEmail()));
+        val.ifPresentOrElse(
+                client -> {
+                    clientService.resetPassword(client);
+                    new ResponseEntity(HttpStatus.OK);
+                },
+                () -> new ResponseEntity(HttpStatus.BAD_REQUEST));
     }
 
 }
