@@ -22,6 +22,8 @@ public class Utils {
         protected void configure() {
             map().setClientId(source.getClientId().getId());
             map().setLocationId(source.getLocationId().getId());
+            map().setClientFistName(source.getClientId().getFirstName());
+            map().setClientLastName(source.getClientId().getLastName());
         }
     };
 

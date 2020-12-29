@@ -69,6 +69,31 @@ public class ProductService implements ProductsContract {
     }
 
     /**
+     * Soft-deletes an existing entity from the database.
+     *
+     * @param id The ID of the entity stored in the database.
+     * @return TRUE if the entity was soft-deleted, FALSE otherwise.
+     */
+
+    Boolean delete(@NotNull Integer id) {
+        return productRepository
+                .findById(id)
+                .map(result -> {
+                    var product = productRepository.findById(id);
+                    NoticeDto notice = noticeService.getById(product.get().getNoticeId().getId());
+
+                    notice.setAvaibleQuantity(notice.getAvaibleQuantity()+ product.get().getQuantity());
+                    noticeService.update(notice);
+                    OrderDto order = orderService.getById(product.get().getOrderId().getId());
+                    order.setTotalPrice(order.getTotalPrice()-(product.get().getNoticeId().getPricePerUnit()*product.get().getQuantity()));
+                    orderService.update(order);
+                    result.setIsDeleted(true);
+                    return productRepository.save(result).getIsDeleted();
+                })
+                .orElseThrow(EntityNotFoundException::new);
+    }
+
+    /**
      * Returns a list of all non soft-deleted entities from the database.
      *
      * @return A list of DTO objects with details of the non soft-deleted entities stored in the database.

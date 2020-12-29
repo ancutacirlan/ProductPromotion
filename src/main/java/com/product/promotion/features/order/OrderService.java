@@ -52,6 +52,7 @@ public class OrderService implements OrderContract {
     OrderDto initiate (@NotNull OrderDto dto) {
         Order order = modelMapper.map(dto, Order.class);
         order.setClientId(clientContract.getClientById(dto.getClientId()));
+        order.setLocationId(locationContract.getLocationById(dto.getLocationId()));
         return modelMapper.map(orderRepository.save(order), OrderDto.class);
     }
 

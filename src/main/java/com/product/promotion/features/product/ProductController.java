@@ -33,4 +33,9 @@ public class ProductController {
         return ResponseEntity.ok(productService.getAllByOrder(orderId));
     }
 
+    @DeleteMapping(path = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> delete(@PathVariable("id") Integer id) {
+        return ResponseEntity.ok(productService.delete(id));
+    }
+
 }
