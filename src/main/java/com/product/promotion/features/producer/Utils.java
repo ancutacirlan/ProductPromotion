@@ -22,7 +22,7 @@ public class Utils {
 
         @Override
         protected void configure() {
-            map().setClientId(source.getId());
+            map().setClientId(source.getClientId().getId());
             map().setFirstName(source.getClientId().getFirstName());
             map().setLastName(source.getClientId().getLastName());
             map().setEmail(source.getClientId().getEmail());
