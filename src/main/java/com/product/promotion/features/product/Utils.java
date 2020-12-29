@@ -18,6 +18,9 @@ public class Utils {
         protected void configure() {
             map().setOrderId(source.getOrderId().getId());
             map().setNoticeId(source.getNoticeId().getId());
+            map().setProducerId(source.getNoticeId().getProducerId().getId());
+            map().setProducerEmail(source.getNoticeId().getProducerId().getClientId().getEmail());
+            map().setProducerPhone(source.getNoticeId().getProducerId().getClientId().getPhone());
             map().setProducerFirstName(source.getNoticeId().getProducerId().getClientId().getFirstName());
             map().setProducerLastName(source.getNoticeId().getProducerId().getClientId().getLastName());
             map().setVegetableName(source.getNoticeId().getVegetableId().getName());

@@ -60,7 +60,7 @@ public class OrderService implements OrderContract {
 
     ResponseEntity<String> placeOrderAndSentEmail (@NotNull Integer orderId) {
 
-        StringBuilder mail = new StringBuilder(String.format("%32s%32s%32s%32s", "Produs", "Cantitate", "Pret", "Producator"));
+        StringBuilder mail = new StringBuilder(String.format("%32s%32s%32s%32s%32s%32s", "Produs", "Cantitate", "Pret", "Producator","Telefon","Email"));
         mail.append("\n");
         Optional<Order> order = orderRepository
                 .findById(orderId);
@@ -70,8 +70,9 @@ public class OrderService implements OrderContract {
         else
         {
             for (ProductDto product: productDto) {
-                mail.append(String.format("%32s%32s%32s%32s", product.getVegetableName(), product.getQuantity(),
-                        product.getPricePerUnit() * product.getQuantity(), product.getProducerFirstName() + " " + product.getProducerLastName() + "\n"));
+                mail.append(String.format("%32s%32s%32s%32s%32s%32s", product.getVegetableName(), product.getQuantity(),
+                        product.getPricePerUnit() * product.getQuantity(), product.getProducerFirstName() + " " + product.getProducerLastName(),
+                        product.getProducerPhone(),product.getProducerEmail()+"\n"));
             }
             mail.append("\n");
             mail.append("\n");
