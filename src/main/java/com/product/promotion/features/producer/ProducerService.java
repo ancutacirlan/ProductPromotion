@@ -118,7 +118,25 @@ public class ProducerService implements ProducerContract {
         return producerRepository
                 .findById(dto.getId())
                 .map(result -> {
+                  locationRepository
+                            .findById(dto.getLocationId())
+                            .map(loc -> {
+                                System.out.println(dto.getLocationId());
+                                Location toBeUpdated = modelMapper.map(dto, Location.class);
+                                return modelMapper.map(locationRepository.save(toBeUpdated), LocationDto.class);
+                            })
+                            .orElseThrow(EntityNotFoundException::new);
+                    clientRepository
+                            .findById(dto.getClientId())
+                            .map(cli -> {
+                                System.out.println(dto.getClientId());
+                                Client toBeUpdated = modelMapper.map(dto, Client.class);
+                                toBeUpdated.setLocationId(modelMapper.map(dto, Location.class));
+                                return modelMapper.map(clientRepository.save(toBeUpdated), ClientDto.class);
+                            })
+                            .orElseThrow(EntityNotFoundException::new);
                     Producer toBeUpdated = modelMapper.map(dto, Producer.class);
+                    toBeUpdated.setClientId(modelMapper.map(dto, Client.class));
                     return modelMapper.map(producerRepository.save(toBeUpdated), ProducerDto.class);
                 })
                 .orElseThrow(EntityNotFoundException::new);
