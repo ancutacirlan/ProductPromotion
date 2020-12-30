@@ -16,6 +16,7 @@ public class ClientDto {
     private String lastName;
     private String phone;
     private String email;
+    private String password;
     private Integer locationId;
     private String city;
     private String district;
