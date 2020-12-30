@@ -1,7 +1,6 @@
 package com.product.promotion.features.producer;
 
 
-import com.product.promotion.features.notice.contract.NoticeContract;
 import org.modelmapper.PropertyMap;
 
 

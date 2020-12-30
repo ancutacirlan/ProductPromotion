@@ -7,7 +7,6 @@ import com.product.promotion.features.client.contract.ClientContract;
 import com.product.promotion.features.location.Location;
 import com.product.promotion.features.location.LocationDto;
 import com.product.promotion.features.location.LocationRepository;
-import com.product.promotion.features.notice.contract.NoticeContract;
 import com.product.promotion.features.producer.contract.ProducerContract;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,23 +25,20 @@ public class ProducerService implements ProducerContract {
     private ModelMapper modelMapper;
     private ClientContract clientContract;
     private ClientRepository clientRepository;
-    private LocationRepository locationRepository;
     private final PasswordEncoder encoder;
-    private NoticeContract noticeContract;
-
+    private LocationRepository locationRepository;
 
     @Autowired
     public ProducerService(ProducerRepository producerRepository, ModelMapper modelMapper,
                            ClientContract clientContract, ClientRepository clientRepository,
-                           LocationRepository locationRepository, PasswordEncoder encoder, NoticeContract noticeContract) {
+                           PasswordEncoder encoder, LocationRepository locationRepository) {
         this.producerRepository = producerRepository;
         this.modelMapper = modelMapper;
-        this.noticeContract = noticeContract;
+        this.locationRepository = locationRepository;
         modelMapper.addMappings(Utils.producerFieldMapping);
         modelMapper.addMappings(Utils.producerMapping);
         this.clientContract = clientContract;
         this.clientRepository = clientRepository;
-        this.locationRepository = locationRepository;
         this.encoder = encoder;
     }
 
@@ -118,25 +113,9 @@ public class ProducerService implements ProducerContract {
         return producerRepository
                 .findById(dto.getId())
                 .map(result -> {
-                  locationRepository
-                            .findById(dto.getLocationId())
-                            .map(loc -> {
-                                System.out.println(dto.getLocationId());
-                                Location toBeUpdated = modelMapper.map(dto, Location.class);
-                                return modelMapper.map(locationRepository.save(toBeUpdated), LocationDto.class);
-                            })
-                            .orElseThrow(EntityNotFoundException::new);
-                    clientRepository
-                            .findById(dto.getClientId())
-                            .map(cli -> {
-                                System.out.println(dto.getClientId());
-                                Client toBeUpdated = modelMapper.map(dto, Client.class);
-                                toBeUpdated.setLocationId(modelMapper.map(dto, Location.class));
-                                return modelMapper.map(clientRepository.save(toBeUpdated), ClientDto.class);
-                            })
-                            .orElseThrow(EntityNotFoundException::new);
                     Producer toBeUpdated = modelMapper.map(dto, Producer.class);
-                    toBeUpdated.setClientId(modelMapper.map(dto, Client.class));
+                    ClientDto client = modelMapper.map(dto,ClientDto.class);
+                    toBeUpdated.setClientId(clientContract.updateClient(client));
                     return modelMapper.map(producerRepository.save(toBeUpdated), ProducerDto.class);
                 })
                 .orElseThrow(EntityNotFoundException::new);

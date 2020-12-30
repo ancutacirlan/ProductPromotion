@@ -37,7 +37,6 @@ public class ClientService implements ClientContract {
     private final SendEmail sendEmail;
 
 
-
     @Autowired
     public ClientService(AuthenticationManager authenticationManager, JwtUtils jwtUtils, LocationRepository locationRepository,
                          ClientRepository clientRepository, ModelMapper modelMapper, LocationContract locationContract, PasswordEncoder encoder, GeneratePassword generatePassword, SendEmail sendEmail) {
@@ -64,7 +63,7 @@ public class ClientService implements ClientContract {
     public ClientDto register(@NotNull ClientDto dto) {
         Location location = modelMapper.map(dto, Location.class);
         modelMapper.map(locationRepository.save(location), LocationDto.class);
-        Client client = modelMapper.map(dto,Client.class);
+        Client client = modelMapper.map(dto, Client.class);
         client.setLocationId(location);
         client.setPassword(encoder.encode(dto.getPassword()));
         return modelMapper.map(clientRepository.save(client), ClientDto.class);
@@ -85,6 +84,7 @@ public class ClientService implements ClientContract {
         clientRepository.save(client);
         sendEmail.sendMail(client.getEmail(), "New password: ", password);
     }
+
     /**
      * Returns a list of all non soft-deleted entities from the database.
      *
@@ -106,6 +106,7 @@ public class ClientService implements ClientContract {
                 .map(item -> modelMapper.map(item, ClientDto.class))
                 .collect(Collectors.toList());
     }
+
     /**
      * Gets an entity from the database based on its ID.
      *
@@ -144,6 +145,8 @@ public class ClientService implements ClientContract {
                 .findById(dto.getId())
                 .map(result -> {
                     Client toBeUpdated = modelMapper.map(dto, Client.class);
+                    LocationDto locationDto = modelMapper.map(dto,LocationDto.class);
+                    toBeUpdated.setLocationId(locationContract.updateLocation(locationDto));
                     return modelMapper.map(clientRepository.save(toBeUpdated), ClientDto.class);
                 })
                 .orElseThrow(EntityNotFoundException::new);
@@ -166,7 +169,6 @@ public class ClientService implements ClientContract {
     }
 
 
-
     /**
      * Gets an entity from the database based on its ID.
      *
@@ -187,6 +189,17 @@ public class ClientService implements ClientContract {
                 .orElseThrow(EntityNotFoundException::new);
     }
 
-
+    @Override
+    public Client updateClient(ClientDto dto) {
+        return clientRepository
+                .findById(dto.getId())
+                .map(result -> {
+                    Client toBeUpdated = modelMapper.map(dto, Client.class);
+                    LocationDto locationDto = modelMapper.map(dto,LocationDto.class);
+                    toBeUpdated.setLocationId(locationContract.updateLocation(locationDto));
+                    return clientRepository.save(toBeUpdated);
+                })
+                .orElseThrow(EntityNotFoundException::new);
+    }
 
 }

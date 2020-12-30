@@ -1,12 +1,9 @@
 package com.product.promotion.features.producer;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.product.promotion.features.notice.NoticeDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor

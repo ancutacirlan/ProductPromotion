@@ -104,4 +104,17 @@ public class LocationService implements LocationContract {
                 .findById(id)
                 .orElseThrow(EntityNotFoundException::new);
     }
+
+    @Override
+    public Location updateLocation(LocationDto dto) {
+        return locationRepository
+                .findById(dto.getId())
+                .map(result -> {
+                    var toBeUpdated = modelMapper.map(dto, Location.class);
+                    return locationRepository.save(toBeUpdated);
+                })
+                .orElseThrow(EntityNotFoundException::new);
+    }
+
+
 }
