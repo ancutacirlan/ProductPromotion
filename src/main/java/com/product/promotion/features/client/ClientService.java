@@ -9,6 +9,7 @@ import com.product.promotion.features.location.LocationRepository;
 import com.product.promotion.features.location.contract.LocationContract;
 import com.product.promotion.utils.GeneratePassword;
 import com.product.promotion.utils.SendEmail;
+import org.apache.tomcat.util.buf.UDecoder;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -148,6 +149,7 @@ public class ClientService implements ClientContract {
                     LocationDto locationDto = modelMapper.map(dto,LocationDto.class);
                     locationDto.setId(dto.getLocationId());
                     toBeUpdated.setLocationId(locationContract.updateLocation(locationDto));
+                    toBeUpdated.setPassword(encoder.encode(dto.getPassword()));
                     return modelMapper.map(clientRepository.save(toBeUpdated), ClientDto.class);
                 })
                 .orElseThrow(EntityNotFoundException::new);
@@ -199,6 +201,7 @@ public class ClientService implements ClientContract {
                     LocationDto locationDto = modelMapper.map(dto,LocationDto.class);
                     locationDto.setId(dto.getLocationId());
                     toBeUpdated.setLocationId(locationContract.updateLocation(locationDto));
+                    toBeUpdated.setPassword(encoder.encode(dto.getPassword()));
                     return clientRepository.save(toBeUpdated);
                 })
                 .orElseThrow(EntityNotFoundException::new);
