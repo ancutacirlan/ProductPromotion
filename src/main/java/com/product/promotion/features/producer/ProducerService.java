@@ -52,13 +52,13 @@ public class ProducerService implements ProducerContract {
     @Override
     public ProducerDto register(@NotNull ProducerDto dto){
         Location location = modelMapper.map(dto, Location.class);
-        modelMapper.map(locationRepository.save(location), LocationDto.class);
         Client client = modelMapper.map(dto,Client.class);
         client.setLocationId(location);
         client.setPassword(encoder.encode(dto.getPassword()));
-        modelMapper.map(clientRepository.save(client), ClientDto.class);
         Producer producer = modelMapper.map(dto,Producer.class);
         producer.setClientId(client);
+        modelMapper.map(locationRepository.save(location), LocationDto.class);
+        modelMapper.map(clientRepository.save(client), ClientDto.class);
         return modelMapper.map(producerRepository.save(producer),ProducerDto.class);
     }
 
@@ -115,6 +115,7 @@ public class ProducerService implements ProducerContract {
                 .map(result -> {
                     Producer toBeUpdated = modelMapper.map(dto, Producer.class);
                     ClientDto client = modelMapper.map(dto,ClientDto.class);
+                    client.setId(dto.getClientId());
                     toBeUpdated.setClientId(clientContract.updateClient(client));
                     return modelMapper.map(producerRepository.save(toBeUpdated), ProducerDto.class);
                 })

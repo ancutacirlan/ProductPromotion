@@ -62,10 +62,10 @@ public class ClientService implements ClientContract {
     @Override
     public ClientDto register(@NotNull ClientDto dto) {
         Location location = modelMapper.map(dto, Location.class);
-        modelMapper.map(locationRepository.save(location), LocationDto.class);
         Client client = modelMapper.map(dto, Client.class);
         client.setLocationId(location);
         client.setPassword(encoder.encode(dto.getPassword()));
+        modelMapper.map(locationRepository.save(location), LocationDto.class);
         return modelMapper.map(clientRepository.save(client), ClientDto.class);
     }
 
@@ -146,6 +146,7 @@ public class ClientService implements ClientContract {
                 .map(result -> {
                     Client toBeUpdated = modelMapper.map(dto, Client.class);
                     LocationDto locationDto = modelMapper.map(dto,LocationDto.class);
+                    locationDto.setId(dto.getLocationId());
                     toBeUpdated.setLocationId(locationContract.updateLocation(locationDto));
                     return modelMapper.map(clientRepository.save(toBeUpdated), ClientDto.class);
                 })
@@ -196,6 +197,7 @@ public class ClientService implements ClientContract {
                 .map(result -> {
                     Client toBeUpdated = modelMapper.map(dto, Client.class);
                     LocationDto locationDto = modelMapper.map(dto,LocationDto.class);
+                    locationDto.setId(dto.getLocationId());
                     toBeUpdated.setLocationId(locationContract.updateLocation(locationDto));
                     return clientRepository.save(toBeUpdated);
                 })
