@@ -52,4 +52,13 @@ public class FeedbackService {
                 .collect(Collectors.toList());
     }
 
+    List<FeedbackDto> getAll() {
+        return feedbackRepository
+                .findAllByIsDeletedFalse()
+                .stream()
+                .map(item -> modelMapper.map(item, FeedbackDto.class))
+                .collect(Collectors.toList());
+    }
+
+
 }

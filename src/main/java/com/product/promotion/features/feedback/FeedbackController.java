@@ -28,5 +28,10 @@ public class FeedbackController {
         return ResponseEntity.ok(feedbackService.getAllByNotice(noticeId));
     }
 
+    @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<FeedbackDto>>getAll() {
+        return ResponseEntity.ok(feedbackService.getAll());
+    }
+
 
 }
