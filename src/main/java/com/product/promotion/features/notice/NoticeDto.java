@@ -33,6 +33,6 @@ public class NoticeDto implements Serializable {
     private String details;
     private Boolean valid;
     private Boolean alive;
-    private Integer pricePerUnit;
+    private Float pricePerUnit;
 
 }

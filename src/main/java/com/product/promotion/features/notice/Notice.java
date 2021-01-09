@@ -50,6 +50,6 @@ public class Notice extends Audit implements Serializable {
     private Boolean alive;
 
     @Column(name="price_per_unit", nullable = false)
-    private Integer pricePerUnit;
+    private Float pricePerUnit;
 
 }

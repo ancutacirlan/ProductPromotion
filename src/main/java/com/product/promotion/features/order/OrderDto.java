@@ -20,7 +20,7 @@ public class OrderDto implements Serializable {
     private String clientLastName;
     private Boolean confirmed;
     private String details;
-    private Integer totalPrice;
+    private Float totalPrice;
     private Integer locationId;
     private LocalDateTime date;
 }

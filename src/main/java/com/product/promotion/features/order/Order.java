@@ -40,7 +40,7 @@ public class Order extends Audit implements Serializable {
     private String details;
 
     @Column(name="total_price")
-    private Integer totalPrice;
+    private Float totalPrice;
 
     @ManyToOne
     @JoinColumn(name = "location_id")

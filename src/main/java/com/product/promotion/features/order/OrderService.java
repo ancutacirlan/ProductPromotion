@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
@@ -60,26 +59,51 @@ public class OrderService implements OrderContract {
 
     ResponseEntity<String> placeOrderAndSentEmail (@NotNull Integer orderId) {
 
-        StringBuilder mail = new StringBuilder(String.format("%32s%32s%32s%32s%32s%32s", "Produs", "Cantitate", "Pret", "Producator","Telefon","Email"));
-        mail.append("\n");
+        StringBuilder mailClient = new StringBuilder(String.format("%32s%32s%32s%32s%32s%32s", "Produs", "Cantitate", "Pret", "Producator","Telefon","Email"));
+        mailClient.append("\n");
+
         Optional<Order> order = orderRepository
                 .findById(orderId);
+
         List<ProductDto> productDto = productsContract.getAllByOrder(orderId);
+
         if(productDto.isEmpty())
             return ResponseEntity.badRequest().body("Adaugati cel putin un produs!");
         else
         {
             for (ProductDto product: productDto) {
-                mail.append(String.format("%32s%32s%32s%32s%32s%32s", product.getVegetableName(), product.getQuantity(),
-                        product.getPricePerUnit() * product.getQuantity(), product.getProducerFirstName() + " " + product.getProducerLastName(),
+                StringBuilder mailProducer = new StringBuilder(String.format("%32s%32s%32s%32s%32s", "Produs", "Cantitate", "Client","Telefon","Email"));
+                mailProducer.append("\n");
+                mailClient.append(String.format("%32s%32s%32s%32s%32s%32s",
+                        product.getVegetableName(),
+                        product.getQuantity(),
+                        product.getPricePerUnit() * product.getQuantity(),
+                        product.getProducerFirstName() + " " + product.getProducerLastName(),
                         product.getProducerPhone(),product.getProducerEmail()+"\n"));
+                mailProducer.append(String.format("%32s%32s%32s%32s%32s",
+                        product.getVegetableName(),
+                        product.getQuantity(),
+                        order.get().getClientId().getFirstName() + " " + order.get().getClientId().getLastName(),
+                        order.get().getClientId().getPhone(),
+                        order.get().getClientId().getEmail()+"\n"+"\n"));
+                mailProducer.append("Adresa clientului").append("\n").append("Tara: "+order.get().getClientId().getLocationId().getCountry())
+                        .append("\n"+"Oras: "+order.get().getClientId().getLocationId().getCity())
+                        .append("\n"+"Comuna: "+order.get().getClientId().getLocationId().getVillage())
+                        .append("\n"+"District: "+order.get().getClientId().getLocationId().getDistrict())
+                        .append("\n"+"Strada: "+order.get().getClientId().getLocationId().getStreet())
+                        .append("\n"+"Bloc: "+order.get().getClientId().getLocationId().getBloc())
+                        .append("\n"+"Scara: "+order.get().getClientId().getLocationId().getStair())
+                        .append("\n"+"Nr: "+order.get().getClientId().getLocationId().getNo())
+                        .append("\n"+"Detalii: "+order.get().getDetails())
+                        .append("\n"+"Modul de livrare: "+product.getDeliveryMode());
+                sendEmail.sendMail(product.getProducerEmail(), "Comanda noua: ", mailProducer.toString());
             }
-            mail.append("\n");
-            mail.append("\n");
-            mail.append("Pret total: ").append(order.get().getTotalPrice()).append("\n");
-            mail.append("Detalii: ").append(order.get().getDetails()).append("\n");
+            mailClient.append("\n");
+            mailClient.append("\n");
+            mailClient.append("Pret total: ").append(order.get().getTotalPrice()).append(" lei").append("\n");
+            mailClient.append("Detalii: ").append(order.get().getDetails()).append("\n");
             sendEmail.sendMail(order.get().getClientId().getEmail(), "Comanda dumneavoastra: "
-                    , mail.toString());
+                    , mailClient.toString());
             return ResponseEntity.ok("Comanda plasata cu succes!");
         }
 

@@ -19,7 +19,7 @@ public class ProductDto {
     private String producerPhone;
     private String vegetableName;
     private Integer quantity;
-    private Integer pricePerUnit;
+    private Float pricePerUnit;
     private String deliveryMode;
     private Integer orderId;
 
