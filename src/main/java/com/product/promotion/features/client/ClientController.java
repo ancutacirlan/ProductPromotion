@@ -38,6 +38,11 @@ public class ClientController {
         return ResponseEntity.ok(clientService.update(dto));
     }
 
+    @PutMapping(path = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> validateAccount(@PathVariable("id") Integer id) {
+        return ResponseEntity.ok(clientService.validateAccount(id));
+    }
+
     @DeleteMapping(path = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> delete(@PathVariable("id") Integer id) {
         return ResponseEntity.ok(clientService.delete(id));

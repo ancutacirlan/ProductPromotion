@@ -155,6 +155,19 @@ public class ClientService implements ClientContract {
                 .orElseThrow(EntityNotFoundException::new);
     }
 
+    Boolean validateAccount(@NotNull Integer id) {
+        return clientRepository
+                .findById(id)
+                .map(result -> {
+                    if (result.getValidAccount().equals(true))
+                        result.setValidAccount(false);
+                    else
+                        result.setValidAccount(true);
+                    return clientRepository.save(result).getValidAccount();
+                })
+                .orElseThrow(EntityNotFoundException::new);
+    }
+
     /**
      * Soft-deletes an existing entity from the database.
      *

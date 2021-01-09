@@ -43,6 +43,11 @@ public class ProducerController {
         return ResponseEntity.ok(producerService.update(dto));
     }
 
+    @PutMapping(path = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> setActive(@PathVariable("id") Integer id) {
+        return ResponseEntity.ok(producerService.setActive(id));
+    }
+
     @DeleteMapping(path = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> delete(@PathVariable("id") Integer id) {
         return ResponseEntity.ok(producerService.delete(id));

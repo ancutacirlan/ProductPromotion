@@ -122,6 +122,19 @@ public class ProducerService implements ProducerContract {
                 .orElseThrow(EntityNotFoundException::new);
     }
 
+    Boolean setActive(@NotNull Integer id) {
+        return producerRepository
+                .findById(id)
+                .map(result -> {
+                    if(result.isActive()==true)
+                    result.setActive(false);
+                    else
+                        result.setActive(true);
+                    return producerRepository.save(result).isActive();
+                })
+                .orElseThrow(EntityNotFoundException::new);
+    }
+
     /**
      * Soft-deletes an existing entity from the database.
      *
