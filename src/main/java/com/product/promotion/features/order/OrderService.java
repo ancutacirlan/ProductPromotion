@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -52,6 +53,7 @@ public class OrderService implements OrderContract {
         Order order = modelMapper.map(dto, Order.class);
         order.setClientId(clientContract.getClientById(dto.getClientId()));
         order.setLocationId(locationContract.getLocationById(dto.getLocationId()));
+        order.setDate(LocalDateTime.now());
         return modelMapper.map(orderRepository.save(order), OrderDto.class);
     }
 

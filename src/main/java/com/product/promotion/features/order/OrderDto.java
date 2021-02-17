@@ -1,6 +1,7 @@
 package com.product.promotion.features.order;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,5 +23,7 @@ public class OrderDto implements Serializable {
     private String details;
     private Float totalPrice;
     private Integer locationId;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDateTime date;
 }
